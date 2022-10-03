@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #2f3136;
+            margin: 0;
+
+        }
+
+        .login {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            left: 0;
+            margin-right: auto;
+            margin-left: auto;
+            width: 600px;
+            height: 469px;
+            background-color: #37393F;
+            border-radius: 15px;
+        }
+
+        .container {
+            padding: 0px 20px 0px 20px;
+            position: absolute;
+            width: 560px;
+            top: 85px;
+        }
+
+        h1 {
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 0px;
+            margin-top: 25px;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            cursor: default;
+        }
+
+        .labl {
+            font-size: 15px;
+            color: #a3a6aa;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        input[type=text],
+        input[type=password],
+        input[type=email] {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0px 20px 0px;
+            display: inline-block;
+            border: none;
+            box-sizing: border-box;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #212225;
+            color: white;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        button {
+            background-color: #5865f2;
+            color: white;
+            position: absolute;
+            top: 296px;
+            margin: 0px 0px 0px 0px;
+            height: 44px;
+            width: 560px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            right: 0;
+            left: 0;
+            margin-right: auto;
+            margin-left: auto;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #4751c2;
+        }
+
+
+        .contin {
+            font-size: 15px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+
+        }
+
+
+
+        .reg {
+            position: absolute;
+            top: 344px;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            color: #40ace2;
+            cursor: default;
+        }
+
+        .reg:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login">
+        <h1>Create an account</h1>
+        <form action="javascript:register()" class="logf">
+            <div class="container">
+                <label for="eml_t">
+                    <div class="labl" id="eml_t">EMAIL</div>
+                </label>
+                <input id="eml" type="email" name="email" required>
+
+                <label for="user">
+                    <div class="labl" id="user_t">USERNAME</div>
+                </label>
+                <input id="user" type="text" name="user" required>
+
+                <label for="psw">
+                    <div class="labl" id="pswd_t">PASSWORD</div>
+                </label>
+                <input id="psw" type="password" name="psw" required>
+
+
+                <button type="submit">
+                    <div class="contin">Continue</div>
+                </button>
+                <div class="reg">Already have an account?</div>
+            </div>
+        </form>
+        <script src="/dist/pocketbase.umd.js"></script>
+
+        <script>
+            const client = new PocketBase('http://127.0.0.1:8090');
+
+
+            async function register() {
+                var email = document.getElementById('eml').value;
+                var pusername = document.getElementById('user').value;
+                var pass = document.getElementById('psw').value;
+
+                try {
+                    const user = await client.users.create({
+                        email: email,
+                        password: pass,
+                        passwordConfirm: pass,
+                    });
+
+                    const updatedProfile = await client.records.update('profiles', user.profile.id, {
+                        username: pusername,
+                    });
+                    await client.users.requestVerification(user.email);
+                    window.location.replace("http://localhost:3000/app");
+                } catch (error) {
+                    document.getElementById('eml_t').innerHTML = "EMAIL - Error, Email or username already registered";
+                    document.getElementById('eml_t').style.color = "#f38688";
+                    document.getElementById('user_t').innerHTML = "USERNAME - Error, Email or username already registered";
+                    document.getElementById('user_t').style.color = "#f38688";
+                    document.getElementById('pswd_t').innerHTML = "PASSWORD - Error, Email or username already registered";
+                    document.getElementById('pswd_t').style.color = "#f38688";
+                    console.log(error);
+                }
+            }
+        </script>
+
+
+
+
+
+    </div>
+</body>
+
+</html>
