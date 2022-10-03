@@ -4,24 +4,25 @@
     <script type="module">
         import PocketBase from './dist/pocketbase.es.mjs'
 
+        const client = new PocketBase('http://127.0.0.1:8090');
 
-        const client = new PocketBase('http://192.168.1.137:8090');
+        // (Optionally) authenticate
+        const records = await client.records.getFullList('msg_data', 200 /* batch size */, {
+            sort: '-created',
+        });
+       
 
-
-        // create user
-        const user = await client.users.create({
-            email: 'testss@example.com',
-            password: '12345678910',
-            passwordConfirm: '12345678910',
+        for (let i = 0; i < records.length; i++) {
+        console.log(records[i].msg);
+        }
+        // Subscribe to changes in any record from the "demo" collection
+        client.realtime.subscribe('msg_data', function (e) {
+            console.log(e.record.msg);
         });
 
-        // set user profile data
-        const updatedProfile = await client.records.update('profiles', user.profile.id, {
-            name: 'teallahst',
-        });
 
-        // send verification email
-        await client.users.requestVerification(user.email);
+
+
 
     </script>
 

@@ -3,6 +3,7 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+
 const io = new Server(server);
 app.use(express.static('public'))
 const bodyParser = require('body-parser');
@@ -65,8 +66,6 @@ app.get("/register", async function (req, res) {
 return res.sendFile(__dirname + '/public/register.html');
 
 });
-
-
 
 
 server.listen(3000, () => {
