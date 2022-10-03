@@ -117,6 +117,7 @@
 
         .reg:hover {
             text-decoration: underline;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -153,39 +154,68 @@
         <script>
             const client = new PocketBase('http://127.0.0.1:8090');
 
-
+            //login function
             async function register() {
+                document.getElementById('eml_t').innerHTML = "EMAIL";
+                document.getElementById('eml_t').style.color = "#a3a6aa";
+
+                document.getElementById('user_t').innerHTML = "USERNAME";
+                document.getElementById('user_t').style.color = "#a3a6aa";
+                document.getElementById('pswd_t').innerHTML = "PASSWORD";
+                document.getElementById('pswd_t').style.color = "#a3a6aa";
+
                 var email = document.getElementById('eml').value;
                 var pusername = document.getElementById('user').value;
                 var pass = document.getElementById('psw').value;
 
-                try {
-                    const user = await client.users.create({
-                        email: email,
-                        password: pass,
-                        passwordConfirm: pass,
-                    });
+                //check if username exists
+                const records = await client.records.getFullList('profiles', 200 /* batch size */, {
+                    filter: `username = '${pusername}'`,
+                });
 
-                    const updatedProfile = await client.records.update('profiles', user.profile.id, {
-                        username: pusername,
-                    });
-                    await client.users.requestVerification(user.email);
-                    window.location.replace("http://localhost:3000/app");
-                } catch (error) {
-                    document.getElementById('eml_t').innerHTML = "EMAIL - Error, Email or username already registered";
-                    document.getElementById('eml_t').style.color = "#f38688";
-                    document.getElementById('user_t').innerHTML = "USERNAME - Error, Email or username already registered";
+                if (records.length == 0) {
+                    console.log(records.length);
+
+                    //run async create user
+                    try {
+                        const user = await client.users.create({
+                            email: email,
+                            password: pass,
+                            passwordConfirm: pass,
+                        });
+
+                        const updatedProfile = await client.records.update('profiles', user.profile.id, {
+                            username: pusername,
+                        });
+
+                        await client.users.requestVerification(user.email);
+
+                        //window.location.replace("http://localhost:3000/app");
+                    } catch (error) {
+                        //email registered error
+
+                        if ("email" in error.data.data) {
+                            document.getElementById('eml_t').innerHTML = "EMAIL - Fault, Email already registered";
+                            document.getElementById('eml_t').style.color = "#f38688";
+
+                        }
+                        //password short error
+                        if ("password" in error.data.data) {
+                            document.getElementById('pswd_t').innerHTML = "PASSWORD - Fault, Pasword length must be greater than 8";
+                            document.getElementById('pswd_t').style.color = "#f38688";
+                        }
+
+                        
+                    }
+
+                    //username exists error
+                } else {
+                    document.getElementById('user_t').innerHTML = "USERNAME - Fault, Username already registered";
                     document.getElementById('user_t').style.color = "#f38688";
-                    document.getElementById('pswd_t').innerHTML = "PASSWORD - Error, Email or username already registered";
-                    document.getElementById('pswd_t').style.color = "#f38688";
-                    console.log(error);
                 }
+
             }
         </script>
-
-
-
-
 
     </div>
 </body>
