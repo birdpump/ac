@@ -20,24 +20,23 @@ const client = new PocketBase('http://127.0.0.1:8090');
 
 
 app.use(async (req, res, next) => {
-    // attach the PocketBase client to the request object
     req.pbClient = new PocketBase("http://127.0.0.1:8090");
 
-    // load the store data from the request cookie string
+    // load cookie 
     req.pbClient.authStore.loadFromCookie(req.headers.cookie || '');
 
-    // on AuthStore change update the response cookie header
+    // change update cookie header
     req.pbClient.authStore.onChange(() => {
         res.setHeader("Set-Cookie", req.pbClient.authStore.exportToCookie({ httpOnly: false }));
     });
 
     try {
-        // get an up-to-date auth state by refreshing the loaded auth model (if any)
+        //  auth state by refreshing the loaded auth model
         if (req.pbClient.authStore.isValid) {
             await req.pbClient.users.refresh();
         }
     } catch (_) {
-        // clear the auth store on failed refresh
+        // clear auth store
         req.pbClient.authStore.clear();
     }
 
