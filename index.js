@@ -67,6 +67,6 @@ return res.sendFile(__dirname + '/public/register.html');
 });
 
 
-server.listen(3000, () => {
+server.listen(3000,'localhost', () => {
     console.log('listening on *:3000');
 });
