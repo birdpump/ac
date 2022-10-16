@@ -43,18 +43,23 @@ app.use(async (req, res, next) => {
     next();
 })
 
+app.get("/", async function (req, res) {
+    return res.sendFile(__dirname + '/src/index.html');
+
+});
+
 app.get("/app", async function (req, res) {
     if (!req.pbClient.authStore.isValid) {
-        return res.redirect('http://localhost:3000/index.html');
+        return res.redirect('http://localhost:3000/');
     }
 
-    res.sendFile(__dirname + '/public/app.html');
+    res.sendFile(__dirname + '/src/app.html');
 });
 
 
 app.get("/login", async function (req, res) {
     if (!req.pbClient.authStore.isValid) {
-        return res.sendFile(__dirname + '/public/login.html');
+        return res.sendFile(__dirname + '/src/login.html');
     }
 
     res.redirect('http://localhost:3000/app');
@@ -62,11 +67,11 @@ app.get("/login", async function (req, res) {
 
 
 app.get("/register", async function (req, res) {
-return res.sendFile(__dirname + '/public/register.html');
+    return res.sendFile(__dirname + '/src/register.html');
 
 });
 
 
-server.listen(3000,'localhost', () => {
+server.listen(3000, () => {
     console.log('listening on *:3000');
 });
