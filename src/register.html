@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 
-    <title>Document</title>
+    <title>Register</title>
     <style>
         body {
             background-color: #2f3136;
@@ -24,16 +24,16 @@
             left: 0;
             margin-right: auto;
             margin-left: auto;
-            width: 600px;
+            width: 500px;
             height: 469px;
             background-color: #37393F;
-            border-radius: 15px;
+            border-radius: 5px;
         }
 
         .container {
-            padding: 0px 20px 0px 20px;
+            padding: 0px 30px 0px 30px;
             position: absolute;
-            width: 560px;
+            width: 440px;
             top: 85px;
         }
 
@@ -79,7 +79,7 @@
             top: 296px;
             margin: 0px 0px 0px 0px;
             height: 44px;
-            width: 560px;
+            width: 440px;
             border: none;
             cursor: pointer;
             font-size: 15px;
@@ -154,7 +154,7 @@
         <script>
             const client = new PocketBase('http://127.0.0.1:8090');
 
-            //login function
+            //register function
             async function register() {
                 document.getElementById('eml_t').innerHTML = "EMAIL";
                 document.getElementById('eml_t').style.color = "#a3a6aa";
@@ -182,7 +182,7 @@
                             email: email,
                             password: pass,
                             passwordConfirm: pass,
-                        });
+                            });
 
                         const updatedProfile = await client.records.update('profiles', user.profile.id, {
                             username: pusername,
@@ -195,13 +195,13 @@
                         //email registered error
 
                         if ("email" in error.data.data) {
-                            document.getElementById('eml_t').innerHTML = "EMAIL - Fault, Email already registered";
+                            document.getElementById('eml_t').innerHTML = "EMAIL - Email already registered";
                             document.getElementById('eml_t').style.color = "#f38688";
 
                         }
                         //password short error
                         if ("password" in error.data.data) {
-                            document.getElementById('pswd_t').innerHTML = "PASSWORD - Fault, Pasword length must be greater than 8";
+                            document.getElementById('pswd_t').innerHTML = "PASSWORD - Pasword length must be greater than 8";
                             document.getElementById('pswd_t').style.color = "#f38688";
                         }
 
@@ -210,7 +210,7 @@
 
                     //username exists error
                 } else {
-                    document.getElementById('user_t').innerHTML = "USERNAME - Fault, Username already registered";
+                    document.getElementById('user_t').innerHTML = "USERNAME - Username already registered";
                     document.getElementById('user_t').style.color = "#f38688";
                 }
 
